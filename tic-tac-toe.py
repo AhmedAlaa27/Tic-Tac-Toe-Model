@@ -43,3 +43,43 @@ def check_game_over(board, player):
         print("The game is a draw!")
         return True
     return False
+
+
+def get_user_input():
+    """Gets the player's move input."""
+    while True:
+        try:
+            user_input = int(input("Enter your move (1-9): ")) - 1
+            if user_input >= 0 and user_input < 9:
+                return user_input
+            else:
+                print("Invalid input. Please choose a number between 1 and 9.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+
+def play_game():
+    print("Welcome to Tic-Tac-Toe!")
+    print_board()
+
+    current_player = 'X'  # Human player starts as 'X'
+
+    while True:
+        if current_player == 'X':  # Human player's turn
+            position = get_user_input()
+            if make_move(board, position, current_player):
+                print_board()
+                if check_game_over(board, current_player):
+                    break
+                current_player = switch_player(current_player)
+        else:
+            print("AI's turn!")
+            # position = get_ai_move()
+            if make_move(board, position, current_player):
+                print_board()
+                if check_game_over(board, current_player):
+                    break
+                current_player = switch_player(current_player)
+
+
+play_game()
