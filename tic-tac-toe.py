@@ -1,3 +1,5 @@
+import math
+
 board = [' ' for _ in range(9)]
 
 def print_board():
@@ -58,14 +60,63 @@ def get_user_input():
             print("Invalid input. Please enter a number.")
 
 
+def minimax(board, depth, is_maximizing):
+    """Recursive Minimax function to evaluate game states."""
+    
+    # BASE CASES
+    if check_winner(board, 'O'):
+        return 1
+    elif check_winner(board, 'X'):
+        return -1
+    elif is_board_full(board):
+        return 0
+    
+    # MAXIMIZING PLAYER (AI)
+    if is_maximizing:
+        best_score = -math.inf
+        for i in range(len(board)):
+            if board[i] == ' ':
+                board[i] = 'O'
+                score = minimax(board, depth + 1, False)
+                board[i] = ' '
+                best_score = max(best_score, score)
+        return best_score
+    # MINIMIZING PLAYER (HUMAN)
+    else:
+        best_score = math.inf
+        for i in range(len(board)):
+            if board[i] == ' ':
+                board[i] = 'X'
+                score = minimax(board, depth + 1, True)
+                board[i] = ' '
+                best_score = min(best_score, score)
+        return best_score
+            
+
+def get_ai_move():
+    """Determines the AI's best move using the Minimax algorithm."""
+    best_score = -math.inf
+    best_move = None
+    
+    for i in range(len(board)):
+        if board[i] == ' ':
+            board[i] = 'O'
+            score = minimax(board, 0, False)
+            board[i] = ' '
+            
+            if score > best_score:
+                best_score = score
+                best_move = i
+    return best_move
+
 def play_game():
     print("Welcome to Tic-Tac-Toe!")
     print_board()
 
-    current_player = 'X'  # Human player starts as 'X'
+    current_player = 'X'
 
     while True:
-        if current_player == 'X':  # Human player's turn
+        if current_player == 'X':
             position = get_user_input()
             if make_move(board, position, current_player):
                 print_board()
@@ -74,12 +125,11 @@ def play_game():
                 current_player = switch_player(current_player)
         else:
             print("AI's turn!")
-            # position = get_ai_move()
+            position = get_ai_move()
             if make_move(board, position, current_player):
                 print_board()
                 if check_game_over(board, current_player):
                     break
                 current_player = switch_player(current_player)
-
 
 play_game()
